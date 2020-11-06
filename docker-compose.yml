@@ -1,0 +1,24 @@
+version: '3.6'
+services:
+
+    db:
+        image: postgres
+        command: ALTER postgres  WITH PASSWORD POSTGReS_PASSWORD;
+        restart: always
+        volumes:
+            - './data:/var/lib/postgresql/data'
+        environment:
+            IP: 172.17.0.1
+            PORT: 8000
+            POSTGRES_URL:
+            POSTGReS_PASSWORD: postgres
+
+    go:
+        build: .
+        command: ["/usr/bin/sh", "./a.out"]
+        restart: always
+        ports:
+            - '8000:8000'
+        depends_on:
+            - 'db'
+
