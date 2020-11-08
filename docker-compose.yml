@@ -1,22 +1,28 @@
 version: '3.6'
+
+networks:
+    network-gopostgres:
 services:
 
     db:
         image: postgres
-        command: ALTER postgres  WITH PASSWORD POSTGReS_PASSWORD;
         restart: always
-        volumes:
-            - './data:/var/lib/postgresql/data'
+        networks:
+            - 'network-gopostgres'
         environment:
             IP: 172.17.0.1
-            PORT: 8000
+            PORT: 5432
             POSTGRES_URL:
-            POSTGReS_PASSWORD: postgres
-
+            POSTGRES_PASSWORD: postgres
+        volumes:
+            - './data:/var/lib/postgresql/data'
     go:
-        build: .
-        command: ["/usr/bin/sh", "./a.out"]
-        restart: always
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: ["/bin/sh", "./a.out"]
+        networks:
+            - 'network-gopostgres'
         ports:
             - '8000:8000'
         depends_on:
